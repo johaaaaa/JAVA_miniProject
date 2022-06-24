@@ -46,6 +46,26 @@ public class BookDAO extends DAO{
 		}
 	}
 	
+	public void update(Book book) {
+		try {
+			connect();
+			String sql = "UPDATE books SET book_rental=? WHERE isbn=?";
+			
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, book.getBookRental());
+			pstmt.setInt(2, book.getIsbn());
+			
+			pstmt.executeUpdate();
+		
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}finally {
+			disconnect();
+		}
+		
+	}
+	
+	
 	//삭제 - 있는 책인지 확인하고 삭제 
 	public void delete(int isbn) {
 		try {
@@ -68,6 +88,31 @@ public class BookDAO extends DAO{
 		}
 	}
 	//조회 - selectDAO 클래스에서
+	//단건조회
+	//isbn 조회
+	public Book selectBookIsbn(int isbn) {
+		Book book = null;
+		try {
+			connect();
+			String sql = "SELECT * FROM books WHERE isbn =" + isbn;
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(sql);
+			while(rs.next()) {
+				book = new Book();
+				book.setIsbn(rs.getInt("isbn"));
+				book.setBookTitle(rs.getString("book_title"));
+				book.setBookWriter(rs.getString("book_writer"));
+				book.setBookCategory(rs.getString("book_category"));
+				book.setBookRental(rs.getInt("book_rental"));
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}finally {
+			disconnect();
+		}
+		return book;
+	}
+	
 	//대출 - rentDAO 클래스
 	//반납 - rentDAO 클래스 
 

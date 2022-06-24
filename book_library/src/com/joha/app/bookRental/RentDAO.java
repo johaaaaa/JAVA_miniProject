@@ -2,7 +2,7 @@ package com.joha.app.bookRental;
 
 import java.sql.SQLException;
 
-import com.joha.app.book.Book;
+import com.joha.app.book.Rent;
 import com.joha.app.common.DAO;
 
 public class RentDAO extends DAO {
@@ -15,13 +15,21 @@ public class RentDAO extends DAO {
 		return rentDAO;
 	}
 	
+	
+	//crud
+
+	} //isbn기준
+	
+	//
+	
+	
 	//대출 - 재고 -1(stock테이블만들어야함)XX, 대출여부는->대출중으로(두 테이블 다) / 데이터를 rental 테이블에 insert
 	
 			//-0.책 제목 입력
 			
 		
 			//-1.books 테이블에서 대출가능 -> 대출중으로 변경(수정)
-			public void rentStatus(Book book) {
+			public void rentStatus(Rent book) {
 				try {
 					connect();
 					String sql = "UPDATE books SET book_rental = 1 WHERE ISBN=?";
@@ -38,16 +46,27 @@ public class RentDAO extends DAO {
 			}
 			
 			//-2.rental 테이블에 값 복사			
-			public void insertRent(Book book) {
+			public void insertRent(Rent book, int phoneNum) {
 				try {
 					connect();
-					String sql = "INSERT INTO rental (isbn,book_title,book_writer,book_category,book_stock,book_rental) "
-							+ "SELECT isbn,book_title,book_writer,book_category,book_stock,book_rental FROM books WHERE ISBN=?";
+					String sql = "INSERT INTO rental VALUES(?, ?, ?, ?, ?,default,default,?)";
 					
 					pstmt = conn.prepareStatement(sql);
 					pstmt.setInt(1, book.getIsbn());
-					pstmt.executeUpdate();
-
+					pstmt.setString(2, book.getBookTitle());
+					pstmt.setString(3, book.getBookWriter());
+					pstmt.setString(4, book.getBookCategory());
+					pstmt.setInt(5, book.getBookRental());
+					pstmt.setInt(6, phoneNum);
+					
+					int result = pstmt.executeUpdate();
+					
+					if(result>0) {
+						System.out.println("완료");
+					}else {
+						System.out.println("실패");
+					}
+					
 				}catch(SQLException e) {
 					e.printStackTrace();
 				}finally {
@@ -75,10 +94,36 @@ public class RentDAO extends DAO {
 				}
 			}
 			//-4.대여 완
-
+			
 		
 		//반납 - 대출여부 ->대출중으로 수정(books,rental 테이블 둘 다 변경) / 
 			//-1. 회원정보 입력받기 
+			//회원정보 조회
+			public Rent selectPhoneNum(int phoneNum) {
+				Rent rent = null;
+				try {
+					connect();
+					String sql = "SELECT * FROM rental WHERE phoneNum =" + phoneNum;
+					stmt = conn.createStatement();
+					rs = stmt.executeQuery(sql);
+					while(rs.next()) {
+						rent = new Rent();
+						rent.setIsbn(rs.getInt("isbn"));
+						rent.setBookTitle(rs.getString("book_title"));
+						rent.setBookWriter(rs.getString("book_writer"));
+						rent.setBookCategory(rs.getString("book_category"));
+						rent.setBookRental(rs.getInt("book_rental"));
+						rent.setRentDate(rs.getDate("rent_date"));
+						rent.setReturnDate(rs.getDate("return_date"));
+						rent.setPhoneNum(rs.getInt("phone_num"));
+					}
+				}catch(SQLException e) {
+					e.printStackTrace();
+				}finally {
+					disconnect();
+				}
+				return rent;
+			} 
 			
 			//-2. 책 제목 입력받기
 			

@@ -2,10 +2,13 @@ package com.joha.app.book;
 
 import java.util.Scanner;
 
+import com.joha.app.bookRental.Rent;
+import com.joha.app.bookRental.RentDAO;
 import com.joha.app.selectInfo.SelectSystem;
 
 public class BookSystem {
 	private BookDAO bdao = BookDAO.getInstance();
+	private RentDAO rdao = RentDAO.getInstance();
 	private Scanner sc = new Scanner(System.in);
 	
 	public BookSystem() {
@@ -40,17 +43,57 @@ public class BookSystem {
 			
 		}
 	}
-	
+	/*
 	private void returnBook() {
 		int isbn = inputIsbn();
 		bdao.returnBook(isbn);		
-	}
+	}*/
 
 	private void rentalBook() {
-		Book book = inputIsbn();
-		bdao.rentBook(book);
+		int isbn = inputIsbn();
+		//책존재확인하기ㅣ
+		Book book = bdao.selectBookIsbn(isbn);
+		if(book == null) {
+			//안되면 경고
+			System.out.println("없는 책");
+			return;
+		}
+		//확인되면 대출
+		//대여가능여부 확인
+		if(book.getBookRental() ==1 ) {
+			System.out.println("대출불가");
+			return;
+		}
+		//대여가능여부 업데이트
+		book.setBookRental(1);
+		bdao.update(book);
+		
+		//대여기록에 추가 
+		System.out.println("전화번호를 입력하세요(뒷자리8자리)");
+		int phoneNum=Integer.parseInt(sc.nextLine());
+		rdao.insertRent(book, phoneNum);
+		
+		System.out.println("대여완료");
 	}
 
+	private void returnBook() {
+		int phoneNum = inputPhoneNum();
+		//회원확인
+		Rent rent = rdao.selectPhoneNum(phoneNum);
+			//안되면 경고
+		if(phoneNum == null) {
+			System.out.println("대여한 책이 없습니다.");
+			return;
+		}
+		//확인되면 isbn 입력 / 확인 
+		
+		
+		//확인되면 반납
+		//대여가능여부 업데이트
+		//대여기록에서 삭제 
+	}
+	
+	
 	private void menuPrint() {
 		System.out.println("┌─────────────────────────────────────────────┐");
 		System.out.println("| 1.등록 | 2.삭제 | 3.조회 | 4.대출 | 5.반납 | 0.종료 |");
@@ -95,6 +138,11 @@ public class BookSystem {
 
 	private int inputIsbn() {
 		System.out.print(" ISBN > ");
+		return Integer.parseInt(sc.nextLine());
+	}
+	
+	private int inputPhoneNum() {
+		System.out.println(" 전화번호 > ");
 		return Integer.parseInt(sc.nextLine());
 	}
 	
