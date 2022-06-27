@@ -111,7 +111,7 @@ public class BookDAO extends DAO{
 		}
 		return book;
 	}
-	
+
 	//대출 - rentDAO 클래스
 	//반납 - rentDAO 클래스 
 

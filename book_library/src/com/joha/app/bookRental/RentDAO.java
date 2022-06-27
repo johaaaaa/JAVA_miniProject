@@ -133,5 +133,31 @@ public class RentDAO extends DAO {
 				}
 				return rent;
 			}
+			//연체
+			public String lateFee(int isbn) {
+				String lateFee = "";
+				try {
+					connect();
+					String sql = "SELECT return_date, "
+							+ "CASE WHEN return_date<sysdate THEN TRUNC(sysdate-return_date) WHEN return_date>= sysdate THEN 0 END late FROM rental WHERE isbn="+isbn;
+					stmt = conn.createStatement();
+					rs = stmt.executeQuery(sql);
+					
+					if(rs.next()) {
+						int late = rs.getInt("late");
+						if(late>0) {
+							
+							lateFee += "\n <( ‵□′)>── [ "+ late + " ] 일 연체되어 연체료 [ "+late*500+" ] 원이 발생했습니다 ─Ｃε(┬﹏┬)3  \n";
+						}
+					}else {
+						
+					}
+				}catch(SQLException e) {
+					e.printStackTrace();
+				}finally {
+					disconnect();
+				}
+				return lateFee;
+			}
 			
 }

@@ -45,7 +45,9 @@ public class SelectSystem {
 	
 
 	private void menuPrint() {
-		System.out.println("┌──────────────────────────────────────────────────────────────┐");
+		System.out.println("　  ∧  ∧");
+		System.out.println("　( 0 v 0)  <  검색 방식을 선택해주세요 ~ ! ");
+		System.out.println("┌───〇〇────────────────────────────────────────────────────────┐");
 		System.out.println("| 1.전체 | 2.제목 | 3.저자 | 4.카테고리 | 5.대출중 | 6.회원조회 | 0.뒤로가기 |");
 		System.out.println("|               메 뉴 를 숫 자 로 입 력 해 주 세 요 ^0^                |");
 		System.out.println("└──────────────────────────────────────────────────────────────┘");
@@ -133,7 +135,7 @@ public class SelectSystem {
 		}
 	}
 
-	//회원조회
+	//회원별조회
 	private void selectPhoneNum() {
 		int phoneNum = inputPhoneNum();
 		System.out.printf("\n - " + phoneNum + "님이 대출한 책 목록 - \n");

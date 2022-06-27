@@ -15,6 +15,9 @@ public class BookSystem {
 	private Scanner sc = new Scanner(System.in);
 	
 	public BookSystem() {
+		System.out.println("                  　 ∧,,,∧");
+		System.out.println("                  ∩(＾ 0 ＾)∩");
+		System.out.println("     ∘✧₊⁺⁺₊✧∘ 영남대학교 도서관 대출시스템입니다 ∘✧₊⁺⁺₊✧∘ ");
 		while(true) {
 			//메뉴 출력
 			menuPrint();
@@ -46,10 +49,9 @@ public class BookSystem {
 			
 		}
 	}
-	
 	private void menuPrint() {
 		System.out.println("┌─────────────────────────────────────────────┐");
-		System.out.println("| 1.등록 | 2.삭제 | 3.조회 | 4.대출 | 5.반납 | 0.종료 |");
+		System.out.println("| 1.등록 | 2.삭제 | 3.검색 | 4.대출 | 5.반납 | 0.종료 |");
 		System.out.println("|       메 뉴 를 숫 자 로 입 력 해 주 세 요 ^0^       |");
 		System.out.println("└─────────────────────────────────────────────┘");
 		System.out.print(" 메뉴 선택 > ");
@@ -87,7 +89,7 @@ public class BookSystem {
 	private void returnBook() {
 		int phoneNum = inputPhoneNum();
 		//회원확인
-		System.out.printf("\n - " + phoneNum + "님이 대출한 책 목록 - \n");
+		System.out.printf("\n - " + phoneNum + " 님이 대출한 책 목록 - \n");
 		List<Rent> rent = sdao.selectPhoneNum(phoneNum);
 		if(rent.size()==0) {
 			System.out.println(" 대출중인 책이 없습니다. ");
@@ -100,13 +102,18 @@ public class BookSystem {
 		System.out.printf("\n 반납할 책의 ISBN을 입력해주세요 \n");
 		int isbn = inputIsbn();
 		Book book = bdao.selectBookIsbn(isbn);
+		
 		if(book == null) {
-			System.out.println(" 해당 책이 없습니다.");
+			System.out.println(" 대여 목록에 해당 책이 없습니다.");
+			return;
 		}
+		
+		
 		//대여가능여부 업데이트
 		book.setBookRental(0);
 		bdao.update(book);
-		//확인되면 반납
+		//연체료 문구
+		System.out.println(rdao.lateFee(isbn));
 		//대여기록에서 삭제 
 		rdao.returnBook(isbn);
 		}
@@ -147,9 +154,17 @@ public class BookSystem {
 	}
 
 	private int inputIsbn() {
+		int isbn = 0;
 		System.out.print(" ISBN > ");
-		return Integer.parseInt(sc.nextLine());
-	}
+		try {
+			isbn = Integer.parseInt(sc.nextLine());
+		}catch (NumberFormatException e) {
+			System.out.println(" ISBN은 4자리 숫자입니다. ");
+		}
+		return isbn;	
+		}
+		
+		
 	
 	private int inputPhoneNum() {
 		System.out.print(" 전화번호 > ");
