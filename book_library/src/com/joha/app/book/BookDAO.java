@@ -22,21 +22,20 @@ public class BookDAO extends DAO{
 		
 		try {
 			connect(); //try-catch문밖에있어도O?
-			String sql = "INSERT INTO books VALUES(book_isbn_seq.nextval,?, ?, ?, ?, ?)";
+			String sql = "INSERT INTO books VALUES(book_isbn_seq.nextval,?, ?, ?, ?)";
 
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, book.getBookTitle());
 			pstmt.setString(2, book.getBookWriter());
 			pstmt.setString(3, book.getBookCategory());
-			pstmt.setInt(4, book.getBookStock());
-			pstmt.setInt(5, book.getBookRental());
+			pstmt.setInt(4, book.getBookRental());
 			
 			int result = pstmt.executeUpdate(); //실행! !
 			
 			if(result>0) {
 				System.out.println(" [ 등록되었습니다 ] ");
 			}else {
-				System.out.println("등록 실패했습니다.");
+				System.out.println(" [ 등록 실패했습니다 ] ");
 			}
 			
 		}catch(SQLException e) {

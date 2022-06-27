@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.joha.app.book.Book;
-import com.joha.app.book.BookDAO;
+import com.joha.app.bookRental.Rent;
 
 public class SelectSystem {
 	private SelectDAO sdao = SelectDAO.getInstance();
@@ -28,14 +28,11 @@ public class SelectSystem {
 				//카테고리별 조회
 				selectBookCategory();
 			}else if(menuNo == 5) {
-				//대여가능한 책 조회
-				selectPossible();
-			}else if(menuNo == 6) {
 				//대여중인 책 조회
-				selectImpossible();
-			}else if (menuNo == 7) {
+				selectRented();
+			}else if (menuNo == 6) {
 				//회원별 조회
-				selectMember();
+				selectPhoneNum();
 			}else if (menuNo == 0) {
 				//뒤로가기
 				back();
@@ -48,10 +45,10 @@ public class SelectSystem {
 	
 
 	private void menuPrint() {
-		System.out.println("┌──────────────────────────────────────────────────────────────────────┐");
-		System.out.println("| 1.전체 | 2.제목 | 3.저자 | 4.카테고리 | 5.대출가능 | 6.대출중 | 7.회원 | 0.뒤로가기 |");
-		System.out.println("|                     메 뉴 를 숫 자 로 입 력 해 주 세 요 ^0^                  |");
-		System.out.println("└──────────────────────────────────────────────────────────────────────┘");
+		System.out.println("┌──────────────────────────────────────────────────────────────┐");
+		System.out.println("| 1.전체 | 2.제목 | 3.저자 | 4.카테고리 | 5.대출중 | 6.회원조회 | 0.뒤로가기 |");
+		System.out.println("|               메 뉴 를 숫 자 로 입 력 해 주 세 요 ^0^                |");
+		System.out.println("└──────────────────────────────────────────────────────────────┘");
 		System.out.print(" 메뉴 선택 > ");
 	}
 	
@@ -65,6 +62,7 @@ public class SelectSystem {
 		return menu;
 	}
 	
+	//전체검색
 	private void selectAll() {
 		List<Book> list = sdao.selectAll();
 		for(Book book : list) {
@@ -75,59 +73,84 @@ public class SelectSystem {
 	//제목검색
 	private void selectBookTitle() {
 		String bookTitle = inputBookTitle();
-		Book book = sdao.selectBookTitle(bookTitle);
-		if(book != null) {
-			System.out.println(book);
-		}else {
-			System.out.println("해당 책이 존재하지 않습니다.");
+		List<Book> book = sdao.selectBookTitle(bookTitle);
+		if(book.size()==0) {
+			System.out.println(" 해당 책이 존재하지 않습니다.");
+		}
+		for(Book bk : book) {
+			System.out.println(bk);
 		}
 	}
 	
 	private String inputBookTitle() {
-		// TODO Auto-generated method stub
-		return null;
+		System.out.print(" 제목 > ");
+		return sc.nextLine();
 	}
+			
 	//저자검색
 	private void selectBookWriter() {
-		String bookTitle = inputBookWriter();
-		Book book = sdao.selectBookTitle(bookTitle);
-		if(book != null) {
-			System.out.println(book);
-		}else {
-			System.out.println("해당 책이 존재하지 않습니다.");
-		}		
-	}
+		String bookWriter = inputBookWriter();
+		List <Book> book = sdao.selectBookWriter(bookWriter);
+		if(book.size()==0) {
+			System.out.println(" 해당 저자의 책이 존재하지 않습니다.");
+		}
+		for(Book bk : book) {
+			System.out.println(bk);
+		}
+	}	
 
 	private String inputBookWriter() {
-		// TODO Auto-generated method stub
-		return null;
+		System.out.print(" 저자 > ");
+		return sc.nextLine();
 	}
 
-
-
+	//카테고리검색
 	private void selectBookCategory() {
-		// TODO Auto-generated method stub
-		
+		String bookCategory = inputBookCategory();
+		List <Book> book = sdao.selectBookCategory(bookCategory);
+		if(book.size()==0) {
+			System.out.println(" 해당 카테고리에 책이 없습니다.");
+		}
+			
+		for(Book bk : book) {
+			System.out.println(bk);
+		}
+	}
+	
+	private String inputBookCategory() {
+		System.out.print(" 카테고리 > ");
+		return sc.nextLine();
 	}
 
-
-	private void selectPossible() {
-		// TODO Auto-generated method stub
-		
+	//대출중
+	private void selectRented() {
+		List<Book> book = sdao.selectBookRented(0);
+		if(book.size()==0) {
+			System.out.println(" 대출중인 책이 없습니다.");
+		}
+		for(Book bk : book) {
+			System.out.println(bk);
+		}
 	}
 
-
-	private void selectImpossible() {
-		// TODO Auto-generated method stub
-		
+	//회원조회
+	private void selectPhoneNum() {
+		int phoneNum = inputPhoneNum();
+		System.out.printf("\n - " + phoneNum + "님이 대출한 책 목록 - \n");
+		List<Rent> rent = sdao.selectPhoneNum(phoneNum);
+		if(rent.size()==0) {
+			System.out.println(" 대출중인 책이 없습니다. ");
+		}
+		for(Rent rt : rent) {
+			System.out.println(rt);
+		}
+		System.out.println("");
 	}
 
-
-	private void selectMember() {
-		// TODO Auto-generated method stub
-		
+	private int inputPhoneNum() {
+		System.out.print(" 전화번호 뒷자리 8자리 > ");
+		return Integer.parseInt(sc.nextLine());
 	}
-
 
 	
 	private void back() {

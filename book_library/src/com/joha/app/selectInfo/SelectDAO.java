@@ -4,6 +4,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.naming.spi.DirStateFactory.Result;
+
 import com.joha.app.book.Book;
 import com.joha.app.bookRental.Rent;
 import com.joha.app.common.DAO;
@@ -34,7 +36,6 @@ public class SelectDAO extends DAO {
 						book.setBookTitle(rs.getString("book_title"));
 						book.setBookWriter(rs.getString("book_writer"));
 						book.setBookCategory(rs.getString("book_category"));
-						book.setBookStock(rs.getInt("book_stock"));
 						book.setBookRental(rs.getInt("book_rental"));
 						
 						list.add(book);
@@ -49,110 +50,133 @@ public class SelectDAO extends DAO {
 		
 			//단건조회 
 				//제목 조회
-				public Book selectBookTitle(String bookTitle) {
-					Book book = null;
+				public List<Book> selectBookTitle(String bookTitle) {
+					List<Book> list = new ArrayList<>();
 					try {
 						connect();
-						String sql = "SELECT * FROM books WHERE book_title ='" + bookTitle +"'";
-						stmt = conn.createStatement();
-						rs = stmt.executeQuery(sql);
+						String sql = "SELECT * FROM books WHERE book_title LIKE '%'||?||'%'";
+						pstmt = conn.prepareStatement(sql);
+						pstmt.setString(1, bookTitle);
+						rs = pstmt.executeQuery();
+
 						while(rs.next()) {
-							book = new Book();
+							Book book = new Book();
+							book.setIsbn(rs.getInt("isbn"));
 							book.setBookTitle(rs.getString("book_title"));
+							book.setBookWriter(rs.getString("book_writer"));
+							book.setBookCategory(rs.getString("book_category"));
+							book.setBookRental(rs.getInt("book_rental"));
+							list.add(book);
 						}
 					}catch(SQLException e) {
 						e.printStackTrace();
 					}finally {
 						disconnect();
-					}return book;
+					}return list;
 				}
 				
 				//저자 조회
-				public Book selectBookWriter(String bookWriter) {
-					Book book = null;
+				public List<Book> selectBookWriter(String bookWriter) {
+					List<Book> list = new ArrayList<>();
 					try {
 						connect();
 						String sql = "SELECT * FROM books WHERE book_writer ='"+bookWriter+"'";
 						stmt = conn.createStatement();
 						rs = stmt.executeQuery(sql);
 						while(rs.next()) {
-							book = new Book();
+							Book book = new Book();
+							book.setIsbn(rs.getInt("isbn"));
+							book.setBookTitle(rs.getString("book_title"));
 							book.setBookWriter(rs.getString("book_writer"));
+							book.setBookCategory(rs.getString("book_category"));
+							book.setBookRental(rs.getInt("book_rental"));
+							list.add(book);
 						}
 					}catch(SQLException e) {
 						e.printStackTrace();
 					}finally {
 						disconnect();
-					}return book;
+					}return list;
 				}
 				
 				//카테고리(분류) 조회
-				public Book selectBookCategory(String bookCategory) {
-					Book book = null;
+				public List<Book> selectBookCategory(String bookCategory) {
+					List<Book> list = new ArrayList<>();
 					try {
 						connect();
-						String sql = "SELECT * FROM books WHERE book_category='"+bookCategory+"'";
-						stmt = conn.createStatement();
-						rs = stmt.executeQuery(sql);
+						String sql = "SELECT * FROM books WHERE book_category=UPPER(?)";
+						pstmt = conn.prepareStatement(sql);
+						pstmt.setString(1, bookCategory);
+						rs = pstmt.executeQuery();
+						
 						while(rs.next()) {
-							book = new Book();
+							
+							Book book = new Book();
+							book.setIsbn(rs.getInt("isbn"));
+							book.setBookTitle(rs.getString("book_title"));
+							book.setBookWriter(rs.getString("book_writer"));
 							book.setBookCategory(rs.getString("book_category"));
+							book.setBookRental(rs.getInt("book_rental"));
+							list.add(book);
 						}
 					}catch(SQLException e) {
 						e.printStackTrace();
 					}finally {
 						disconnect();
-					}return book;
+					}return list;
 				}
 			
-				//대여가능 조회
-				public Book selectBookRental(int bookRental) {
-					Book book = null;
+				//대여중 조회 (rental table을 select)
+				public List<Book> selectBookRented(int bookRental) {
+					List<Book> list = new ArrayList<>();
 					try {
 						connect();
 						String sql = "SELECT * FROM books WHERE book_rental=1";
 						stmt = conn.createStatement();
-						stmt.executeQuery(sql);
+						rs = stmt.executeQuery(sql);
+						
+						while(rs.next()) {
+							Book book = new Book();
+							book.setIsbn(rs.getInt("isbn"));
+							book.setBookTitle(rs.getString("book_title"));
+							book.setBookWriter(rs.getString("book_writer"));
+							book.setBookCategory(rs.getString("book_category"));
+							book.setBookRental(rs.getInt("book_rental"));
+							list.add(book);
+						}
 						
 					}catch(SQLException e) {
 						e.printStackTrace();
 					}finally {
 						disconnect();
-					}return book;
+					}return list;
 				}
-			
 				
-				//대여중 조회 (rental table을 select)
-				public Rent selectBookRented(int rental) {
-					Rent rent = null;
-					try {
-						connect();
-						String sql = "SELECT * FROM rental";
-						stmt = conn.createStatement();
-						stmt.executeQuery(sql);
-					}catch(SQLException e) {
-						e.printStackTrace();
-					}finally {
-						disconnect();
-					}return rent;
-				}
 				
 				//회원별 대여목록 조회
-				public Rent selectMember(int phoneNum) {
-					Rent rent = null;
+				public List<Rent> selectPhoneNum(int phoneNum) {
+					List <Rent> list = new ArrayList<>();
 					try {
 						connect();
 						String sql = "SELECT * FROM rental WHERE phone_num ="+phoneNum;
 						stmt = conn.createStatement();
 						rs = stmt.executeQuery(sql);
 						while(rs.next()) {
-							rent = new Rent();
+							Rent rent = new Rent(); 
+							rent.setIsbn(rs.getInt("isbn"));
+							rent.setBookTitle(rs.getString("book_title"));
+							rent.setBookWriter(rs.getString("book_writer"));
+							rent.setBookCategory(rs.getString("book_category"));
+							rent.setBookRental(rs.getInt("book_rental"));
+							rent.setRentDate(rs.getDate("rent_date"));
+							rent.setReturnDate(rs.getDate("return_date"));
 							rent.setPhoneNum(rs.getInt("phone_num"));
+							list.add(rent);
 						}
 					}catch(SQLException e) {
 						e.printStackTrace();
 					}finally {
 						disconnect();
-					}return rent;
+					}return list;
 				}
 }

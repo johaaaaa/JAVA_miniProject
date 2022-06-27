@@ -2,7 +2,7 @@ package com.joha.app.bookRental;
 
 import java.sql.SQLException;
 
-import com.joha.app.book.Rent;
+import com.joha.app.book.Book;
 import com.joha.app.common.DAO;
 
 public class RentDAO extends DAO {
@@ -15,19 +15,7 @@ public class RentDAO extends DAO {
 		return rentDAO;
 	}
 	
-	
-	//crud
-
-	} //isbn기준
-	
-	//
-	
-	
-	//대출 - 재고 -1(stock테이블만들어야함)XX, 대출여부는->대출중으로(두 테이블 다) / 데이터를 rental 테이블에 insert
-	
 			//-0.책 제목 입력
-			
-		
 			//-1.books 테이블에서 대출가능 -> 대출중으로 변경(수정)
 			public void rentStatus(Rent book) {
 				try {
@@ -46,7 +34,7 @@ public class RentDAO extends DAO {
 			}
 			
 			//-2.rental 테이블에 값 복사			
-			public void insertRent(Rent book, int phoneNum) {
+			public void insertRent(Book book, int phoneNum) {
 				try {
 					connect();
 					String sql = "INSERT INTO rental VALUES(?, ?, ?, ?, ?,default,default,?)";
@@ -60,13 +48,7 @@ public class RentDAO extends DAO {
 					pstmt.setInt(6, phoneNum);
 					
 					int result = pstmt.executeUpdate();
-					
-					if(result>0) {
-						System.out.println("완료");
-					}else {
-						System.out.println("실패");
-					}
-					
+				
 				}catch(SQLException e) {
 					e.printStackTrace();
 				}finally {
@@ -103,7 +85,7 @@ public class RentDAO extends DAO {
 				Rent rent = null;
 				try {
 					connect();
-					String sql = "SELECT * FROM rental WHERE phoneNum =" + phoneNum;
+					String sql = "SELECT * FROM rental WHERE phone_num =" + phoneNum;
 					stmt = conn.createStatement();
 					rs = stmt.executeQuery(sql);
 					while(rs.next()) {
@@ -116,7 +98,7 @@ public class RentDAO extends DAO {
 						rent.setRentDate(rs.getDate("rent_date"));
 						rent.setReturnDate(rs.getDate("return_date"));
 						rent.setPhoneNum(rs.getInt("phone_num"));
-					}
+					} 
 				}catch(SQLException e) {
 					e.printStackTrace();
 				}finally {
@@ -125,13 +107,31 @@ public class RentDAO extends DAO {
 				return rent;
 			} 
 			
-			//-2. 책 제목 입력받기
-			
+			//-2. 책 제목 입력받
 			//-3. 대출중->대출가능으로 update(rental,books테이블 둘 다)
-			
 			//-4. rental테이블에서 삭제
-
-	
-	
-	
+			public Rent returnBook(int isbn) {
+				Rent rent = null;
+				try {
+					connect();
+					String sql = "DELETE FROM rental WHERE isbn=" + isbn;
+					stmt = conn.createStatement();
+					int result = stmt.executeUpdate(sql);
+						
+					if(result >0) {
+						
+						System.out.println(" [ 정상적으로 반납되었습니다 ] ");
+					}else {
+						System.out.println(" [ 반납되지 않았습니다 ] ");
+					}
+					
+				}catch(SQLException e){
+					e.printStackTrace();
+					
+				}finally {
+					disconnect();
+				}
+				return rent;
+			}
+			
 }
