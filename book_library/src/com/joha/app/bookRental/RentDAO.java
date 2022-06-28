@@ -14,7 +14,7 @@ public class RentDAO extends DAO {
 		}
 		return rentDAO;
 	}
-	
+		//대출	
 			//-0.책 제목 입력
 			//-1.books 테이블에서 대출가능 -> 대출중으로 변경(수정)
 			public void rentStatus(Rent book) {
@@ -158,6 +158,24 @@ public class RentDAO extends DAO {
 					disconnect();
 				}
 				return lateFee;
+			}
+			
+			//연장(returndate수정)
+			//회원번호 확인 - 대출목록 출력 - 연장할 isbn 입력 - returndate update 쿼리
+			public void updateReturn(Book book) {
+				try {
+					connect();
+					String sql = "UPDATE rental SET return_date = return_date +1 WHERE isbn = ?";
+					pstmt = conn.prepareStatement(sql);
+					pstmt.setInt(1, book.getIsbn());
+					
+					pstmt.executeUpdate();
+					
+				}catch(SQLException e) {
+					e.printStackTrace();
+				}finally {
+					disconnect();
+				}
 			}
 			
 }

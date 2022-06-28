@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.joha.app.bookRental.Rent;
 import com.joha.app.common.DAO;
 
 public class BookDAO extends DAO{
@@ -45,7 +46,8 @@ public class BookDAO extends DAO{
 		}
 	}
 	
-	public void update(Book book) {
+	//수정 (반납 상태 업데이트)
+	public void updateRentalStatus(Book book) {
 		try {
 			connect();
 			String sql = "UPDATE books SET book_rental=? WHERE isbn=?";
@@ -65,11 +67,11 @@ public class BookDAO extends DAO{
 	}
 	
 	
-	//삭제 - 있는 책인지 확인하고 삭제 
+	//삭제 - 등록되어있지 않고 / 대출중이면 삭제 불가  
 	public void delete(int isbn) {
 		try {
 			connect();
-			String sql = "DELETE FROM books WHERE isbn="+ isbn;
+			String sql = "DELETE FROM books WHERE book_rental =0 AND isbn="+ isbn;
 			
 			stmt = conn.createStatement();
 			int result  = stmt.executeUpdate(sql);
@@ -77,7 +79,7 @@ public class BookDAO extends DAO{
 			if(result>0) {
 				System.out.println(" [ 삭제되었습니다 ] "); 
 			}else {
-				System.out.println(" [ 존재하지 않는 책입니다 ] ");
+				System.out.println(" [ 삭제할 수 없습니다 ] ");
 			}
 
 		}catch(SQLException e){
@@ -89,6 +91,7 @@ public class BookDAO extends DAO{
 	//조회 - selectDAO 클래스에서
 	//단건조회
 	//isbn 조회
+	
 	public Book selectBookIsbn(int isbn) {
 		Book book = null;
 		try {
@@ -115,10 +118,4 @@ public class BookDAO extends DAO{
 	//대출 - rentDAO 클래스
 	//반납 - rentDAO 클래스 
 
-	
-	
-	
-	
-	
-	
 }
