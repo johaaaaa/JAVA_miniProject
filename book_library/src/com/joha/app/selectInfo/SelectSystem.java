@@ -51,8 +51,8 @@ public class SelectSystem {
 		System.out.println("　  ∧  ∧");
 		System.out.println("　( 0 v 0)  <  검색 방식을 선택해주세요 ~ ! ");
 		System.out.println("┌───〇─〇───────────────────────────────────────────────────────＊");
-		System.out.println("| 1.전체 | 2.제목 | 3.저자 | 4.카테고리 | 5.대출중 | 6.회원검색 | 0.뒤로가기 |");
-		System.out.println("|               메 뉴 를 숫 자 로 입 력 해 주 세 요 ^o^                |");
+		System.out.println("| 1.전체 | 2.제목 | 3.저자 | 4.카테고리 | 5.대출중 | 6.회원검색 | 0.뒤로가기        |");
+		System.out.println("|               메 뉴 를 숫 자 로 입 력 해 주 세 요 ^o^                      |");
 		System.out.println("└──────────────────────────────────────────────────────────────┘");
 	}
 	
@@ -78,6 +78,8 @@ public class SelectSystem {
 		for(Book book : list) {
 			System.out.println(book);
 		}
+		System.out.println(" \n                    - 현재  " + page + " 페이지  / 전체  " + sdao.printLastPage() + " 페이지 -");
+
 		
 		while(true) {
 			page = insertPage();
@@ -87,7 +89,10 @@ public class SelectSystem {
 		for(Book book : list) {
 			System.out.println(book);
 			}
-		System.out.println(" \n - 현재 " + page + " 페이지 / 전체" + page + " 페이지 -");
+		System.out.println(" \n                    - 현재  " + page + " 페이지 / 전체 " + sdao.printLastPage() + " 페이지 -");
+			}else if(page > sdao.printLastPage()){
+				System.out.println(" 마지막 페이지입니다. ");
+				
 			}else {
 				break;
 			}

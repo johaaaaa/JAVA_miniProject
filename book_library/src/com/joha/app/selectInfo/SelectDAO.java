@@ -1,5 +1,6 @@
 package com.joha.app.selectInfo;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +21,7 @@ public class SelectDAO extends DAO {
 	
 	//조회(따로클래스만들어서 메인메뉴-조회-조회메뉴)
 			//전체조회
-			public List<Book> selectAll(){
+			/*public List<Book> selectAll(){
 				List<Book> list = new ArrayList<>();
 				try {
 					connect();
@@ -44,14 +45,14 @@ public class SelectDAO extends DAO {
 					disconnect();
 				}
 				return list;
-			}
+			}*/
 			
-			//페이지
+			//전체조회 - 페이지
 			public List<Book> selectList(int page){
 				List<Book> list = new ArrayList<>();
 				try {
 					connect();
-					String sql = "SELECT B.* FROM (SELECT CEIL(ROWNUM/10) page, \r\n"
+					String sql = "SELECT B.* FROM (SELECT CEIL(ROWNUM/5) page, \r\n"
 							+ "                        A.* FROM(\r\n"
 							+ "                        SELECT * FROM books ORDER BY isbn)A)B\r\n"
 							+ "                        WHERE page = ?";
@@ -77,6 +78,27 @@ public class SelectDAO extends DAO {
 					disconnect();
 				}
 				return list;
+			}
+			
+			//전체 페이지 수 구하기
+			public int printLastPage() {
+				int print=0;
+				try {
+					connect();
+					String sql = "SELECT CEIL((COUNT(rownum))/5) AS count FROM books ";
+					
+					stmt = conn.createStatement();
+					rs = stmt.executeQuery(sql);
+					while(rs.next()) {
+						print = rs.getInt(1);
+					}
+					
+				}catch(SQLException e) {
+					e.printStackTrace();
+				}finally {
+					disconnect();
+				}
+				return print;
 			}
 		
 			//단건조회 
