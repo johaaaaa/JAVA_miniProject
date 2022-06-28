@@ -16,9 +16,9 @@ public class BookSystem {
 	
 	public BookSystem() {
 		System.out.println("");
-		System.out.println("                        　 ∧,,,∧");
-		System.out.println("                        ∩(＾ 0 ＾)∩");
-		System.out.println("           ∘✧₊⁺⁺₊✧∘ 영남대학교 도서관 대출시스템입니다 ∘✧₊⁺⁺₊✧∘ ");
+		System.out.println("                                                            　 ∧,,,∧");
+		System.out.println("                           ∩(＾ 0 ＾)∩");
+		System.out.println("                                ∘✧₊⁺⁺₊✧∘ 영남대학교 도서관 대출시스템입니다 ∘✧₊⁺⁺₊✧∘ ");
 		while(true) {
 			//메뉴 출력
 			menuPrint();
@@ -58,8 +58,8 @@ public class BookSystem {
 	private void menuPrint() {
 		System.out.println("");
 		System.out.println("┌─────────────────────────────────────────────────────────┐");
-		System.out.println("|   1.책등록 | 2.삭제 | 3.검색 | 4.대출 | 5.반납 | 6.연장 | 0.종료  |");
-		System.out.println("|            메 뉴 를 숫 자 로 입 력 해 주 세 요 ^o^              |");
+		System.out.println("|   1.책등록 | 2.삭제 | 3.검색 | 4.대출 | 5.반납 | 6.연장 | 0.종료           |");
+		System.out.println("|            메 뉴 를 숫 자 로 입 력 해 주 세 요 ^o^                    |");
 		System.out.println("└─────────────────────────────────────────────────────────┘");
 	}
 	
@@ -97,6 +97,24 @@ public class BookSystem {
 
 		
 		return book;
+	}
+	
+	//책 수정
+	private void updateBook() {
+		//isbn 입력
+		System.out.println(" 수정할 책의 isbn을 입력하세요 ");
+		int isbn = inputIsbn();
+		//기존정보 출력
+		
+		//수정정보 입력
+		System.out.println( " 수정 사항을 입력하세요 ");
+		String bookTitle = inputBookTitle();
+		bdao.updateTitle(bookTitle);
+		
+	}
+	
+	private void inputBookTitle() {
+		System.out.print(" 수정할 제목을 입력하세요 >");
 	}
 	
 	//책 삭제

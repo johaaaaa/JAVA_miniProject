@@ -46,25 +46,87 @@ public class BookDAO extends DAO{
 		}
 	}
 	
-	//수정 (반납 상태 업데이트)
-	public void updateRentalStatus(Book book) {
-		try {
-			connect();
-			String sql = "UPDATE books SET book_rental=? WHERE isbn=?";
-			
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setInt(1, book.getBookRental());
-			pstmt.setInt(2, book.getIsbn());
-			
-			pstmt.executeUpdate();
-		
-		}catch(SQLException e) {
-			e.printStackTrace();
-		}finally {
-			disconnect();
+	//수정 
+		//제목 수정
+		public void updateTitle(Book book) {
+			try {
+				connect();
+				String sql = "UPDATE books SET book_title =? WHERE isbn=?";
+				
+				pstmt = conn.prepareStatement(sql);
+				pstmt.setString(1, book.getBookTitle());
+				pstmt.setInt(2, book.getIsbn());
+				
+				pstmt.executeUpdate();
+				
+			}catch(SQLException e) {
+				e.printStackTrace();
+			}finally{
+				disconnect();
+			}
 		}
 		
-	}
+		//작가 수정
+		public void updateWriter(Book book) {
+			try {
+				connect();
+				String sql = "UPDATE books SET book_writer =? WHERE isbn=?";
+				
+				pstmt = conn.prepareStatement(sql);
+				pstmt.setString(1, book.getBookWriter());
+				pstmt.setInt(2, book.getIsbn());
+				
+				pstmt.executeUpdate();
+				
+			}catch(SQLException e) {
+				e.printStackTrace();
+			}finally{
+				disconnect();
+			}
+		}
+		
+		//카테고리 수정
+		public void updateCategory(Book book) {
+			try {
+				connect();
+				String sql = "UPDATE books SET book_category =? WHERE isbn=?";
+				
+				pstmt = conn.prepareStatement(sql);
+				pstmt.setString(1, book.getBookCategory());
+				pstmt.setInt(2, book.getIsbn());
+				
+				pstmt.executeUpdate();
+				
+			}catch(SQLException e) {
+				e.printStackTrace();
+			}finally{
+				disconnect();
+			}
+		}
+	
+	
+	
+		//반납 상태 업데이트
+		public void updateRentalStatus(Book book) {
+			try {
+				connect();
+				String sql = "UPDATE books SET book_rental=? WHERE isbn=?";
+				
+				pstmt = conn.prepareStatement(sql);
+				pstmt.setInt(1, book.getBookRental());
+				pstmt.setInt(2, book.getIsbn());
+				
+				pstmt.executeUpdate();
+			
+			}catch(SQLException e) {
+				e.printStackTrace();
+			}finally {
+				disconnect();
+			}
+			
+		}
+		
+		
 	
 	
 	//삭제 - 등록되어있지 않고 / 대출중이면 삭제 불가  
