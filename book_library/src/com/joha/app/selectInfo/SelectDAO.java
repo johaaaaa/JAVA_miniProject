@@ -52,7 +52,7 @@ public class SelectDAO extends DAO {
 				List<Book> list = new ArrayList<>();
 				try {
 					connect();
-					String sql = "SELECT B.* FROM (SELECT CEIL(ROWNUM/5) page, \r\n"
+					String sql = "SELECT B.* FROM (SELECT CEIL(ROWNUM/10) page, \r\n"
 							+ "                        A.* FROM(\r\n"
 							+ "                        SELECT * FROM books ORDER BY isbn)A)B\r\n"
 							+ "                        WHERE page = ?";
@@ -80,12 +80,12 @@ public class SelectDAO extends DAO {
 				return list;
 			}
 			
-			//전체 페이지 수 구하기
+			//전체 페이지 수 출력
 			public int printLastPage() {
 				int print=0;
 				try {
 					connect();
-					String sql = "SELECT CEIL((COUNT(rownum))/5) AS count FROM books ";
+					String sql = "SELECT CEIL((COUNT(rownum))/10) AS count FROM books ";
 					
 					stmt = conn.createStatement();
 					rs = stmt.executeQuery(sql);
@@ -182,7 +182,7 @@ public class SelectDAO extends DAO {
 				}
 				
 			//카테고리 목록 출력
-				public List<Book> printCategory(String bookCategory){
+				public List<Book> printCategory(){
 					List<Book> list = new ArrayList<>();
 					try {
 						connect();
@@ -192,11 +192,7 @@ public class SelectDAO extends DAO {
 						
 						while(rs.next()) {
 							Book book = new Book();
-							book.setIsbn(rs.getInt("isbn"));
-							book.setBookTitle(rs.getString("book_title"));
-							book.setBookWriter(rs.getString("book_writer"));
 							book.setBookCategory(rs.getString("book_category"));
-							book.setBookRental(rs.getInt("book_rental"));
 						
 							list.add(book);
 						}

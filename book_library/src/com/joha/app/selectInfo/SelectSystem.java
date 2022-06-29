@@ -48,12 +48,13 @@ public class SelectSystem {
 
 	private void menuPrint() {
 		System.out.println("");
-		System.out.println("　  ∧  ∧");
-		System.out.println("　( 0 v 0)  <  검색 방식을 선택해주세요 ~ ! ");
-		System.out.println("┌───〇─〇───────────────────────────────────────────────────────＊");
-		System.out.println("| 1.전체 | 2.제목 | 3.저자 | 4.카테고리 | 5.대출중 | 6.회원검색 | 0.뒤로가기        |");
-		System.out.println("|               메 뉴 를 숫 자 로 입 력 해 주 세 요 ^o^                      |");
-		System.out.println("└──────────────────────────────────────────────────────────────┘");
+		System.out.println("　   ∧   ∧");
+		System.out.println("　  ( 0 v 0)  <  검색 방식을 숫자로 선택해주세요 ~ ! ");
+		System.out.println("┌─────〇─〇────────────────────────────────────────＊");
+		System.out.println("| 1.전체 | 2.제목 | 3.저자 | 4.카테고리 | 5.대출중 | 6.회원 |");
+		System.out.println("|-------------------------------------------------|");
+		System.out.println("|                   0.뒤로 돌아가기                   |");
+		System.out.println("└─────────────────────────────────────────────────┘");
 	}
 	
 	private int selectMenu() {
@@ -70,7 +71,7 @@ public class SelectSystem {
 		return menu;
 	}
 	
-	//전체검색
+	//전체검색 - 한번더돌리면 안나옴 !! 
 	private void selectAll() {
 		
 		List<Book> list = sdao.selectList(page);
@@ -78,8 +79,8 @@ public class SelectSystem {
 		for(Book book : list) {
 			System.out.println(book);
 		}
-		System.out.println(" \n                    - 현재  " + page + " 페이지  / 전체  " + sdao.printLastPage() + " 페이지 -");
-
+		System.out.println(" \n                    - 현재  " + page 
+				+ " 페이지  / 전체  " + sdao.printLastPage() + " 페이지 -");
 		
 		while(true) {
 			page = insertPage();
@@ -89,20 +90,21 @@ public class SelectSystem {
 		for(Book book : list) {
 			System.out.println(book);
 			}
-		System.out.println(" \n                    - 현재  " + page + " 페이지 / 전체 " + sdao.printLastPage() + " 페이지 -");
-			}else if(page > sdao.printLastPage()){
-				System.out.println(" 마지막 페이지입니다. ");
-				
+		System.out.println(" \n                    - 현재  " + page 
+				+ " 페이지 / 전체 " + sdao.printLastPage() + " 페이지 -");
+			}else if(page > sdao.printLastPage()) {
+				System.out.println(" 페이지가 더이상 존재하지 않습니다. ");
 			}else {
 				break;
 			}
 		}
 	}
 
-	private int insertPage() {
-		System.out.print("\n 페이지를 입력하세요 (메뉴로 돌아가려면 0) > ");
-		return Integer.parseInt(sc.nextLine());
-	}
+		//이동할 페이지 입력
+		private int insertPage() {
+			System.out.print("\n 이동할 페이지 (뒤로가기 0) > ");
+			return Integer.parseInt(sc.nextLine());
+		}
 	
 	//제목검색
 	private void selectBookTitle() {
@@ -117,6 +119,7 @@ public class SelectSystem {
 		}
 	}
 	
+	//제목 입력
 	private String inputBookTitle() {
 		System.out.print(" 제목 > ");
 		return sc.nextLine();
@@ -146,9 +149,8 @@ public class SelectSystem {
 		System.out.println("\n - " + bookCategory + " 분류의 책 목록 - ");
 		List <Book> book = sdao.selectBookCategory(bookCategory);
 		if(book.size()==0) {
-			System.out.println(" 해당 카테고리에 책이 없습니다.");
-			//System.out.println(sdao.printCategory(null));
-			//System.out.println(" 존재하는 카테고리입니다 ∧");
+			System.out.println("\n 해당 카테고리에 책이 없습니다 T.T 이런 카테고리는 어떠세요? ");
+			printCate();
 		}
 		
 		for(Book bk : book) {
@@ -161,6 +163,17 @@ public class SelectSystem {
 		return sc.nextLine();
 	}
 
+	private void printCate() {
+		List<Book> list = sdao.printCategory();
+		String print = "";
+		for(Book book : list) {
+			print += (book.getBookCategory()+" · ");
+			
+		}
+		print = print.substring(0, print.length()-2);
+		System.out.println("[ " + print + "]");
+	}
+	
 	//대출중
 	private void selectRented() {
 		List<Rent> rent = sdao.selectBookRented(0);

@@ -47,36 +47,25 @@ public class BookDAO extends DAO{
 	}
 	
 	//수정 
-		//제목 수정
-		public void updateTitle(Book book) {
+		//제목, 작가, 카테고리 수정 
+		public void updateBookInfo(Book book) {
 			try {
 				connect();
-				String sql = "UPDATE books SET book_title =? WHERE isbn=?";
+				String sql = "UPDATE books SET book_title =?, book_writer=?, book_category=? WHERE book_rental=0 AND isbn=?";
 				
 				pstmt = conn.prepareStatement(sql);
 				pstmt.setString(1, book.getBookTitle());
-				pstmt.setInt(2, book.getIsbn());
+				pstmt.setString(2, book.getBookWriter());
+				pstmt.setString(3, book.getBookCategory());
+				pstmt.setInt(4, book.getIsbn());
 				
-				pstmt.executeUpdate();
 				
-			}catch(SQLException e) {
-				e.printStackTrace();
-			}finally{
-				disconnect();
-			}
-		}
-		
-		//작가 수정
-		public void updateWriter(Book book) {
-			try {
-				connect();
-				String sql = "UPDATE books SET book_writer =? WHERE isbn=?";
-				
-				pstmt = conn.prepareStatement(sql);
-				pstmt.setString(1, book.getBookWriter());
-				pstmt.setInt(2, book.getIsbn());
-				
-				pstmt.executeUpdate();
+				int result = pstmt.executeUpdate();
+				if(result>0) {
+					System.out.println(" [ 수정되었습니다 ] ");
+				}else {
+					System.out.println("[ 대출중인 책은 수정할 수 없습니다 ] ");
+				}
 				
 			}catch(SQLException e) {
 				e.printStackTrace();
@@ -84,28 +73,7 @@ public class BookDAO extends DAO{
 				disconnect();
 			}
 		}
-		
-		//카테고리 수정
-		public void updateCategory(Book book) {
-			try {
-				connect();
-				String sql = "UPDATE books SET book_category =? WHERE isbn=?";
-				
-				pstmt = conn.prepareStatement(sql);
-				pstmt.setString(1, book.getBookCategory());
-				pstmt.setInt(2, book.getIsbn());
-				
-				pstmt.executeUpdate();
-				
-			}catch(SQLException e) {
-				e.printStackTrace();
-			}finally{
-				disconnect();
-			}
-		}
-	
-	
-	
+
 		//반납 상태 업데이트
 		public void updateRentalStatus(Book book) {
 			try {
@@ -125,8 +93,6 @@ public class BookDAO extends DAO{
 			}
 			
 		}
-		
-		
 	
 	
 	//삭제 - 등록되어있지 않고 / 대출중이면 삭제 불가  
@@ -141,7 +107,7 @@ public class BookDAO extends DAO{
 			if(result>0) {
 				System.out.println(" [ 삭제되었습니다 ] "); 
 			}else {
-				System.out.println(" [ 삭제할 수 없습니다 ] ");
+				System.out.println(" [ 대출중이거나 등록되지 않은 책은 삭제할 수 없습니다 ] ");
 			}
 
 		}catch(SQLException e){

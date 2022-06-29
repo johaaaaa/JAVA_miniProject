@@ -14,11 +14,13 @@ public class BookSystem {
 	private SelectDAO sdao = SelectDAO.getInstance();
 	private Scanner sc = new Scanner(System.in);
 	
+	
 	public BookSystem() {
+		//int bkk  = bk;
 		System.out.println("");
-		System.out.println("                                                            　 ∧,,,∧");
-		System.out.println("                           ∩(＾ 0 ＾)∩");
-		System.out.println("                                ∘✧₊⁺⁺₊✧∘ 영남대학교 도서관 대출시스템입니다 ∘✧₊⁺⁺₊✧∘ ");
+		System.out.println("                          ∧,,,∧");
+		System.out.println("                        ∩(＾ 0 ＾)∩");
+		System.out.println("           ∘✧₊⁺⁺₊✧∘ 영남대학교 도서관 대출시스템입니다 ∘✧₊⁺⁺₊✧∘ ");
 		while(true) {
 			//메뉴 출력
 			menuPrint();
@@ -31,18 +33,21 @@ public class BookSystem {
 			}else if (menuNo ==2) {
 				//삭제
 				deleteBook();
-			}else if (menuNo ==3){
+			}else if (menuNo ==4){
 				//조회(서브메뉴 실행)
 				new SelectSystem().run();
-			}else if (menuNo ==4){
+			}else if (menuNo ==5){
 				//대여
 				rentalBook();
-			}else if (menuNo ==5){
+			}else if (menuNo ==6){
 				//반납
 				returnBook();
-			}else if (menuNo ==6) {
+			}else if (menuNo ==7) {
 				//연장
 				extendReturnDate();
+			}else if(menuNo == 3) {
+				//수정
+				updateBook();
 			}else if (menuNo ==0) {
 				//종료
 				exit();
@@ -57,9 +62,11 @@ public class BookSystem {
 	//메뉴 출력
 	private void menuPrint() {
 		System.out.println("");
+		System.out.println("           ~ 메 뉴 를 숫 자 로 입 력 해 주 세 요 ^o^ ~             ");
 		System.out.println("┌─────────────────────────────────────────────────────────┐");
-		System.out.println("|   1.책등록 | 2.삭제 | 3.검색 | 4.대출 | 5.반납 | 6.연장 | 0.종료           |");
-		System.out.println("|            메 뉴 를 숫 자 로 입 력 해 주 세 요 ^o^                    |");
+		System.out.println("|   1.책등록 | 2.삭제 | 3.수정 | 4.검색 | 5.대출 | 6.반납 | 7.연장  |");
+		System.out.println("|---------------------------------------------------------|");
+		System.out.println("|                         0.나가기                          |");
 		System.out.println("└─────────────────────────────────────────────────────────┘");
 	}
 	
@@ -101,22 +108,44 @@ public class BookSystem {
 	
 	//책 수정
 	private void updateBook() {
-		//isbn 입력
-		System.out.println(" 수정할 책의 isbn을 입력하세요 ");
+		//isbn 입력 - 존재하는 책인지 확인 / 대출중이면 수정 불가
+		System.out.print(" 수정할 책의");
 		int isbn = inputIsbn();
-		//기존정보 출력
+		Book book = bdao.selectBookIsbn(isbn);
+		if(book != null) {
+			//존재하면 출력 
+			System.out.println("\n - 기존 정보 - ");
+			System.out.println(book);
+		}else if(book == null) {	
+			//안되면 경고
+			System.out.println(" [ 등록되지 않은 책입니다 ] ");
+			return;
+		}
+		book = inputUpdateInfo(book);
+		bdao.updateBookInfo(book);
+	}
 		
 		//수정정보 입력
-		System.out.println( " 수정 사항을 입력하세요 ");
-		String bookTitle = inputBookTitle();
-		bdao.updateTitle(bookTitle);
-		
-	}
-	
-	private void inputBookTitle() {
-		System.out.print(" 수정할 제목을 입력하세요 >");
-	}
-	
+		private Book inputUpdateInfo(Book book) {
+			System.out.println("\n ＊ 수정할 정보를 입력하세요 (수정하지 않으려면 0 입력) ＊ ");
+			System.out.print(" 제목 > ");
+			String title = sc.nextLine();
+			if(!title.equals("0")) {
+				book.setBookTitle(title);
+			}
+			System.out.print(" 작가 > ");
+			String writer = sc.nextLine();
+			if(!title.equals("0")) {
+				book.setBookWriter(writer);
+			}
+			System.out.print(" 카테고리 > ");
+			String category = sc.nextLine();
+			if(!category.equals("0")) {
+				book.setBookCategory(category);
+			}
+			return book;
+		}
+
 	//책 삭제
 	private void deleteBook() {
 		int isbn = inputIsbn();
@@ -125,8 +154,8 @@ public class BookSystem {
 
 	//대출
 		private void rentalBook() {
-			System.out.println(" * * 대출기한은 하루입니다 * * ");
-			System.out.println("\n＊ 대출할 책의 ISBN을 입력하세요 ＊");
+			System.out.println("\n   * * 대출기한은 하루입니다 * * ");
+			System.out.println(" ＊ 대출할 책의 ISBN을 입력하세요 ＊");
 			int isbn = inputIsbn();
 			
 			//책존재확인하기
@@ -216,30 +245,31 @@ public class BookSystem {
 		System.out.println("\n [ 대여마감일에서 1일 연장되었습니다 ] ");
 	}
 	
-	private int inputIsbn() {
-		int isbn = 0;
-		System.out.print(" ISBN > ");
-		try {
-			isbn = Integer.parseInt(sc.nextLine());
-		}catch (NumberFormatException e) {
-			System.out.println(" ISBN은 4자리 숫자입니다. ");
+	
+		private int inputIsbn() {
+			int isbn = 0;
+			System.out.print(" ISBN > ");
+			try {
+				isbn = Integer.parseInt(sc.nextLine());
+			}catch (NumberFormatException e) {
+				System.out.println(" ISBN은 4자리 숫자입니다. ");
+			}
+			return isbn;	
 		}
-		return isbn;	
-	}
-	
-	private int inputPhoneNum() {
-		System.out.print(" 전화번호 > ");
-		return Integer.parseInt(sc.nextLine());
-	}
-	
-	private void exit() {
-		System.out.println(" ~ 프로그램을 종료합니다 ~ ");
-	}
-	
-	private void inputError() {
-		System.out.println(" 알맞은 메뉴를 입력해주세요 ");
-	}
-	
+		
+		private int inputPhoneNum() {
+			System.out.print(" 전화번호 > ");
+			return Integer.parseInt(sc.nextLine());
+		}
+		
+		private void exit() {
+			System.out.println(" ~ 프로그램을 종료합니다 ~ ");
+		}
+		
+		private void inputError() {
+			System.out.println(" 알맞은 메뉴를 입력해주세요 ");
+		}
+		
 	
 	
 	
