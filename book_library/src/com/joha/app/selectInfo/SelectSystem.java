@@ -44,7 +44,6 @@ public class SelectSystem {
 			}
 		}
 	}
-	
 
 	private void menuPrint() {
 		System.out.println("");
@@ -56,6 +55,7 @@ public class SelectSystem {
 		System.out.println("|                   0.뒤로 돌아가기                   |");
 		System.out.println("└─────────────────────────────────────────────────┘");
 	}
+	
 	
 	private int selectMenu() {
 		int menu = 0;
